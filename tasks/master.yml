@@ -24,7 +24,7 @@
     setype: named_zone_t
     validate: 'named-checkzone -d {{ item.name }} %s'
   with_items:
-    - "{{ bind_zone_domains }}"
+    - "{{ bind_zone_domains | selectattr('type', 'equalto', 'master') | list }}"
   notify: reload bind
   tags: bind
 
@@ -38,7 +38,7 @@
     setype: named_zone_t
     validate: "named-checkzone {{ ('.'.join(item.1.replace(item.1+'.','').split('.')[::-1])) }}.in-addr.arpa %s"
   with_subelements:
-    - "{{ bind_zone_domains }}"
+    - "{{ bind_zone_domains | selectattr('type', 'equalto', 'master') | list }}"
     - networks
     - flags:
       skip_missing: true
@@ -55,7 +55,7 @@
     setype: named_zone_t
     validate: "named-checkzone {{ (item.1 | ipaddr('revdns'))[-(9+(item.1|regex_replace('^.*/','')|int)//2):] }} %s"
   with_subelements:
-    - "{{ bind_zone_domains }}"
+    - "{{ bind_zone_domains | selectattr('type', 'equalto', 'master') | list }}"
     - ipv6_networks
     - flags:
       skip_missing: true

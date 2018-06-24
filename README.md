@@ -45,6 +45,7 @@ Variables are not required, unless specified.
 | `bind_rrset_order`           | `random`                         | Defines order for DNS round robin (either `random` or `cyclic`)                                                             |
 | `bind_zone_dir`              | -                                | When defined, sets a custom absolute path to the server directory (for zone files, etc.) instead of the default.            |
 | `bind_zone_domains`          | n/a                              | A list of domains to configure, with a seperate dict for each domain, with relevant details                                 |
+| `- type`                       | `master`                       | The type of zone: `master`, `forward`                                                                                    |
 | `- allow_update`             | `['none']`                       | A list of hosts that are allowed to dynamically update this DNS zone.                                                       |
 | `- also_notify`              | -                                | A list of servers that will receive a notification when the master zone file is reloaded.                                   |
 | `- delegate`                 | `[]`                             | Zone delegation. See below this table for examples.                                                                         |
