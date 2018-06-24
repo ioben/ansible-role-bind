@@ -1,3 +1,4 @@
+#jinja2: lstrip_blocks: "True", trim_blocks: "True"
 //
 // named.conf
 //
@@ -28,7 +29,9 @@ options {
   recursion {% if bind_recursion %}yes{% else %}no{% endif %};
   {% if bind_recursion %}allow-recursion { {{ bind_allow_recursion|join('; ') }}; };
   {% endif %}
-{% if bind_forwarders|length > 0 %}forwarders { {{ bind_forwarders|join('; ') }}; };{% endif %}
+  {% if bind_forwarders|length > 0 %}
+  forwarders { {{ bind_forwarders|join('; ') }}; };
+  {% endif %}
   {% if bind_forward_only %}forward only;{% endif %}
 
   rrset-order { order {{ bind_rrset_order }}; };
@@ -45,8 +48,22 @@ options {
   pid-file "/run/named/named.pid";
   session-keyfile "/run/named/session.key";
 
+{% if bind_zone_domains | selectattr("rpz", "defined") | list | length > 0 %}
+  response-policy {
+    {% for zone in bind_zone_domains | selectattr("rpz", "defined") %}
+    zone "{{ zone.name }}"
+      {%- if zone.rpz_opts is defined %} {##}
+        {{- zone.rpz_ops|join(' ') }}
+      {%- endif %};
+    {% if zone.rpz_config is defined %}
+    {% for k,v in zone.rpz_config %}
+    {{ k }} {{ v }}
+    {% endfor %}
+    {% endif %}
+    {% endfor %}
 {% if bind_query_log is defined %}
   querylog yes;
+{% endif %}
 {% endif %}
 };
 
@@ -112,8 +129,8 @@ zone "{{ ('.'.join(network.replace(network+'.','').split('.')[::-1])) }}.in-addr
 {% endif %}
 };
 {% endfor %}
-{% endif %}
 
+{% endif %}
 {% if bind_zone.ipv6_networks is defined %}
 {% for network in bind_zone.ipv6_networks %}
 zone "{{ (network | ipaddr('revdns'))[-(9+(network|regex_replace('^.*/','')|int)//2):] }}" IN {

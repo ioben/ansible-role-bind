@@ -9,6 +9,17 @@ bind_zone_domains:
     hostmaster_email: "hostmaster"
     networks:
       - "10.0.2"
+# - name: rpz
+#   type: master
+#   rpz: true
+#   domain: example.com
+#   name_servers:
+#     - ns1
+#   hosts:
+#     - name: ns1
+#       ip: "{{ bind_zone_master_server_ip }}"
+#     - name: evilcorp.com
+#       ip: 127.0.0.1
 
 # List of acls.
 bind_acls: []
