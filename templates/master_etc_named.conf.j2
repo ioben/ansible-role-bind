@@ -39,6 +39,9 @@ options {
   dnssec-enable {{ bind_dnssec_enable }};
   dnssec-validation {{ bind_dnssec_validation }};
   dnssec-lookaside auto;
+  {% for zone in bind_zone_domains | selectattr("dnssec_enabled", "defined") %}
+  dnssec-must-be-secure {{ zone.domain | d(zone.name) }} {{ zone.dnssec_enabled | ternary("yes", "no") }};
+  {% endfor %}
 
   /* Path to ISC DLV key */
   bindkeys-file "/etc/named.iscdlv.key";
