@@ -22,7 +22,7 @@
     group: "{{ bind_group }}"
     mode: "{{ bind_zone_file_mode }}"
     setype: named_zone_t
-    validate: 'named-checkzone -d {{ item.name }} %s'
+    validate: 'named-checkzone -d {{ item.domain | d(item.name) }} %s'
   with_items:
     - "{{ bind_zone_domains | selectattr('type', 'equalto', 'master') | list }}"
   notify: reload bind
