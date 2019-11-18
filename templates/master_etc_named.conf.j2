@@ -91,7 +91,7 @@ zone "{{ bind_zone.name }}" IN {
 {% endif %}
 {% if bind_zone.allow_update is defined %}
   allow-update { {{ bind_zone.allow_update|join(';') }}; };
-{% else %}
+{% elif bind_zone.type != "forward" %}
   allow-update { none; };
 {% endif %}
 };
